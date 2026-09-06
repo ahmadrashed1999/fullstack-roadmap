@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مسار المطوّر المتكامل - ويب + Flutter + Backend</title>
+<style>
+:root {
+  --bg: #101412;
+  --bg-2: #151a17;
+  --surface: #1a211e;
+  --surface-2: #212925;
+  --text: #e7eee9;
+  --muted: #8b9a90;
+  --line: #2a3430;
+  --accent: #1f8a58;
+  --accent-soft: #1f8a5826;
+  --accent-text: #f3fff8;
+  --ok: #1f8a58;
+  --warn: #b45309;
+  --shadow: 0 18px 40px #00000033;
+  --radius: 14px;
+  --nav-h: 68px;
+}
+[data-theme="light"] {
+  --bg: #f3f6f3;
+  --bg-2: #e8eee9;
+  --surface: #ffffff;
+  --surface-2: #f7faf7;
+  --text: #15201b;
+  --muted: #5a6b62;
+  --line: #d5ddd7;
+  --accent: #187a4e;
+  --accent-soft: #187a4e18;
+  --accent-text: #f4fff8;
+  --ok: #187a4e;
+  --warn: #9a3412;
+  --shadow: 0 14px 32px #15201b14;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body {
+  min-height: 100dvh;
+  font-family: "Segoe UI", Tahoma, "Noto Sans Arabic", Arial, sans-serif;
+  line-height: 1.7;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button, .btn {
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 8px 13px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+}
+button:hover, .btn:hover { border-color: var(--accent); }
+button:active, .btn:active { transform: scale(0.98); }
+button.primary, .btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+}
+button.primary:hover, .btn.primary:hover { filter: brightness(1.06); }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px 48px; }
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: var(--nav-h);
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.top-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.brand { font-weight: 800; letter-spacing: -0.03em; white-space: nowrap; }
+.tabs { display: flex; gap: 6px; flex: 1; }
+.tab {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 8px 12px;
+  border-radius: 999px;
+}
+.tab[aria-selected="true"] {
+  background: var(--accent-soft);
+  color: var(--text);
+  font-weight: 700;
+}
+.progress-mini { min-width: 88px; text-align: left; font-weight: 800; }
+.hero { padding: 28px 0 10px; display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 20px; align-items: end; }
+.hero h1 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 44px); letter-spacing: -0.04em; line-height: 1.15; }
+.hero p { margin: 0; color: var(--muted); max-width: 62ch; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.stat b { display: block; font-size: 24px; line-height: 1.2; }
+.stat span { color: var(--muted); font-size: 13px; }
+.bar { height: 8px; background: var(--bg-2); border-radius: 999px; overflow: hidden; margin-top: 16px; }
+.fill { height: 100%; width: 0; background: var(--accent); transition: width .35s ease; }
+.layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; margin-top: 22px; }
+.side, .panel, .card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.side { padding: 14px; height: fit-content; position: sticky; top: calc(var(--nav-h) + 12px); }
+.side h2, .panel h2, .card h2 { margin: 0 0 10px; font-size: 16px; }
+.phase-nav { display: grid; gap: 6px; }
+.phase-btn {
+  width: 100%;
+  text-align: right;
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: transparent;
+}
+.phase-btn small { color: var(--muted); font-weight: 600; }
+.phase-btn.active { background: var(--accent-soft); border-color: var(--accent); }
+.dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--line); justify-self: center;
+}
+.dot.done { background: var(--accent); }
+.dot.now { box-shadow: 0 0 0 4px var(--accent-soft); background: var(--accent); }
+.panel { padding: 22px; min-height: 520px; }
+.kicker { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+.chip.active, .chip.on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text);
+}
+.week {
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 12px 0;
+}
+.week h3 { margin: 0 0 6px; font-size: 17px; }
+.week ol { margin: 8px 0 0; padding-right: 18px; }
+.week li { margin: 6px 0; }
+.tasks { display: grid; gap: 8px; margin-top: 8px; }
+.tasks label {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+.tasks input { accent-color: var(--accent); margin-top: 4px; }
+.checkpoint {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+.res-mini { display: grid; gap: 8px; margin-top: 8px; }
+.res-mini a, .resource {
+  display: block;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  text-decoration: none;
+}
+.res-mini a:hover, .resource:hover { border-color: var(--accent); }
+.resource { display: grid; gap: 4px; }
+.resource b { font-size: 15px; }
+.resource span { color: var(--muted); font-size: 13px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.search {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.project { padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-2); }
+.project h3 { margin: 0 0 8px; }
+.hidden { display: none; }
+.empty { color: var(--muted); padding: 28px 8px; text-align: center; }
+.rules { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; margin-top: 18px; }
+.foot { color: var(--muted); text-align: center; padding: 28px 0 8px; font-size: 13px; }
+@media (max-width: 980px) {
+  .hero, .layout, .rules, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .side { position: static; }
+  .tabs { overflow: auto; }
+  .top-inner { gap: 8px; }
+  .brand { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand">مسار المطوّر</div>
+      <nav class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-view="path">المسار</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="projects">المشاريع</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="resources">المصادر العربية</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="method">طريقة الدراسة</button>
+      </nav>
+      <div class="progress-mini" id="topProgress">0%</div>
+      <button id="themeBtn" type="button">الوضع الفاتح</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>من الصفر إلى مطوّر Full-Stack</h1>
+        <p>خطة أسبوع بأسبوع لمدة 9 أشهر: أساسيات، ويب، Dart، Flutter، قواعد بيانات، Node.js، ثم ربط كل شيء ونشره.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="statHours">10-15</b><span>ساعة كل أسبوع</span></div>
+        <div class="stat"><b id="statWeeks">34</b><span>أسبوعاً مرتباً</span></div>
+        <div class="stat"><b id="statDone">0</b><span>مهمة مكتملة</span></div>
+      </div>
+    </section>
+    <div class="bar" aria-hidden="true"><div class="fill" id="barFill"></div></div>
+
+    <div class="layout" id="view-path">
+      <aside class="side">
+        <h2>المراحل</h2>
+        <div class="phase-nav" id="phaseNav"></div>
+      </aside>
+      <main class="panel" id="phasePanel"></main>
+    </div>
+
+    <section class="panel hidden" id="view-projects"></section>
+    <section class="panel hidden" id="view-resources"></section>
+    <section class="panel hidden" id="view-method"></section>
+    <footer class="foot">التقدم يُحفظ تلقائياً في هذا المتصفح. لا تنتقل من مرحلة لأنك شاهدت الدورة. انتقل عندما تنفّذ مشروعها وحدك.</footer>
+  </div>
+
+<script>
+const phases = [
+  {
+    id: 1, title: "أساسيات البرمجة وGit", duration: "أسبوعان", hours: "20-30 ساعة",
+    goal: "تفهم كيف يفكر البرنامج، وتقدر تحفظ عملك على GitHub بدون تخبط.",
+    skills: ["متغيرات وشروط وحلقات", "دوال", "أساسيات OOP", "Terminal", "Git وGitHub"],
+    checkpoint: "تقدر تكتب برنامج مهام في الطرفية، وتعمل branch ثم merge، وترفع 3 مستودعات عامة.",
+    weeks: [
+      { title: "الأسبوع 1: التفكير البرمجي", steps: [
+        "تعلم المتغيرات، الأنواع، الشروط، والحلقات عبر تمارين قصيرة يومياً.",
+        "اكتب 15 تمريناً منطقياً بيدك من غير نسخ الحل.",
+        "تعلّم أوامر الطرفية: التنقل، إنشاء مجلد، عرض الملفات، تشغيل ملف.",
+        "اكتب دوال صغيرة تعيد نتيجة واضحة، ثم اختبرها بحالات حدّية."
+      ]},
+      { title: "الأسبوع 2: التنظيم وGit", steps: [
+        "افهم الكلاس، الكائن، والفرق بين البيانات والسلوك.",
+        "تعلّم قراءة رسالة الخطأ وإصلاحها قبل البحث عن الحل.",
+        "طبّق Git: init، add، commit، status، log، branch، merge.",
+        "أنشئ حساب GitHub وارفع CLI بسيط لإدارة مهام مع ملف README."
+      ]}
+    ],
+    tasks: [
+      "حل 30 تمريناً منطقياً",
+      "بناء CLI بسيط لإدارة مهام",
+      "استخدام branches وcommits وmerge",
+      "رفع 3 مشاريع صغيرة إلى GitHub"
+    ],
+    resources: [1,2,3,12,18,19,27]
+  },
+  {
+    id: 2, title: "HTML وCSS", duration: "3 أسابيع", hours: "30-45 ساعة",
+    goal: "تبني صفحات واضحة، متجاوبة، وجاهزة للغة العربية من اليمين لليسار.",
+    skills: ["HTML دلالي", "نماذج", "Flexbox", "Grid", "Responsive", "RTL"],
+    checkpoint: "عندك صفحة سيرة، صفحة هبوط، ولوحة بسيطة تعمل على الجوال وسطح المكتب.",
+    weeks: [
+      { title: "الأسبوع 3: هيكل الصفحة", steps: [
+        "ابنِ صفحة بوسوم دلالي: header، main، nav، article، footer.",
+        "أضف نموذجاً فيه تحقق أساسي للحقول المطلوبة.",
+        "راجع إمكانية الوصول: تسميات، تباين، ترتيب لوحة المفاتيح.",
+        "نفّذ صفحة سيرة ذاتية عربية كاملة."
+      ]},
+      { title: "الأسبوع 4: التخطيط", steps: [
+        "أتقن صندوق العناصر، الهوامش، والحدود قبل أي إطار عمل.",
+        "ابنِ تخطيطاً بـ Flexbox ثم أعد بناءه بـ Grid.",
+        "حوّل صورة تصميم إلى صفحة هبوط من غير إطار CSS.",
+        "أضف حالات hover وfocus واضحة للأزرار والروابط."
+      ]},
+      { title: "الأسبوع 5: الشاشات وRTL", steps: [
+        "اجعل الصفحة تتكيف من 360px إلى سطح المكتب.",
+        "ابنِ لوحة بسيطة متعددة الأعمدة تتحول لعمود واحد على الجوال.",
+        "طبّق dir=rtl على نسخة عربية كاملة واختبر المحاذاة.",
+        "أضف حركة خفيفة للظهور مع احترام تقليل الحركة."
+      ]}
+    ],
+    tasks: [
+      "صفحة سيرة متجاوبة",
+      "صفحة هبوط من تصميم جاهز",
+      "لوحة متجاوبة",
+      "نسخة عربية RTL كاملة"
+    ],
+    resources: [1,4,5,13,20,28,29]
+  },
+  {
+    id: 3, title: "JavaScript", duration: "4 أسابيع", hours: "40-60 ساعة",
+    goal: "تتحكم في الصفحة، تتكلم مع API، وتحفظ بيانات المستخدم محلياً.",
+    skills: ["المصفوفات والكائنات", "DOM", "أحداث", "async/await", "fetch", "localStorage"],
+    checkpoint: "تطبيق مهام، آلة حاسبة، تطبيق API، ولوحة تقرأ JSON وتفلتر النتائج.",
+    weeks: [
+      { title: "الأسبوع 6: لغة جافاسكربت", steps: [
+        "أتقن الأنواع، النطاق، والمصفوفات والكائنات.",
+        "اكتب دوال نقية ثم دوال تغيّر واجهة الصفحة.",
+        "تدرّب على map وfilter وfind يومياً بتمارين قصيرة.",
+        "ابنِ آلة حاسبة تعمل بالكيبورد والفأرة."
+      ]},
+      { title: "الأسبوع 7: الصفحة تتفاعل", steps: [
+        "تعلّم اختيار العناصر، إنشاءها، وحذفها من DOM.",
+        "اربط أحداث النقر والإدخال والإرسال.",
+        "ابنِ تطبيق مهام من غير أي مكتبة.",
+        "أضف حالة فارغة ورسالة خطأ واضحة."
+      ]},
+      { title: "الأسبوع 8: الشبكات والانتظار", steps: [
+        "افهم Promise ثم اكتب نفس الفكرة بـ async/await.",
+        "اجلب بيانات JSON من API عام وعالج حالات التحميل والفشل.",
+        "ابنِ تطبيق طقس أو أسعار أو عملات.",
+        "لا تعرض بيانات خام. نسّقها للمستخدم."
+      ]},
+      { title: "الأسبوع 9: مشروع الأسبوع", steps: [
+        "قسّم الكود إلى ملفات modules.",
+        "احفظ الحالة في localStorage.",
+        "ابنِ لوحة تقرأ ملف JSON فيها بحث وتصفية.",
+        "اكتب README يشرح كيف تشغيل المشروع."
+      ]}
+    ],
+    tasks: [
+      "تطبيق مهام من غير إطار عمل",
+      "آلة حاسبة",
+      "تطبيق يجلب بيانات من API",
+      "لوحة JSON مع بحث وتصفية"
+    ],
+    resources: [1,6,7,8,14,21,30,31]
+  },
+  {
+    id: 4, title: "HTTP وأساسيات الويب", duration: "أسبوع واحد", hours: "10-15 ساعة",
+    goal: "تفهم ماذا يحدث بين المتصفح والخادم قبل كتابة أي Backend.",
+    skills: ["طرق HTTP", "رموز الحالة", "REST", "JSON", "CORS", "DevTools"],
+    checkpoint: "تقدر تقرأ تبويب Network، وتكتب عقد API لمشروعك، وتجرّب الطلبات الأربعة.",
+    weeks: [
+      { title: "الأسبوع 10: لغة الويب", steps: [
+        "راجع DNS باختصار: الاسم يتحول إلى عنوان.",
+        "احفظ معنى GET وPOST وPUT وPATCH وDELETE.",
+        "ميّز رموز 200 و201 و400 و401 و403 و404 و500.",
+        "افتح DevTools وحلّل طلبات موقع تعرفه.",
+        "اكتب عقد REST لمشروع مهام: المسارات والحقول المتوقعة.",
+        "جرّب الطلبات الأربعة على API عام وسجّل النتائج."
+      ]}
+    ],
+    tasks: [
+      "تحليل طلبات Network",
+      "كتابة عقد REST لمشروع",
+      "تجربة GET وPOST وPUT وDELETE"
+    ],
+    resources: [9,15,22,32]
+  },
+  {
+    id: 5, title: "Dart", duration: "أسبوعان", hours: "20-30 ساعة",
+    goal: "تصبح مرتاحاً في لغة Flutter قبل فتح الواجهات.",
+    skills: ["Null safety", "المجموعات", "الكلاسات", "Futures", "الحزم"],
+    checkpoint: "CLI لتتبع المصروفات يستهلك API، وفيه اختبارات صغيرة.",
+    weeks: [
+      { title: "الأسبوع 11: لغة Dart", steps: [
+        "تعلّم الأنواع، Null safety، والقوائم والخرائط.",
+        "اكتب كلاسات بسيطة مع دوال واضحة.",
+        "حل 10 تمارين Dart من غير النظر للحل أولاً.",
+        "افهم متى تستخدم final وconst وvar."
+      ]},
+      { title: "الأسبوع 12: غير متزامن وحزم", steps: [
+        "تعامل مع Future وasync/await ومعالجة الاستثناءات.",
+        "استخدم حزمة جاهزة من pub.dev لطلب HTTP.",
+        "ابنِ متتبع مصروفات في الطرفية.",
+        "أضف اختباراً واحداً على الأقل لمنطق الحساب."
+      ]}
+    ],
+    tasks: [
+      "10 تمارين Dart",
+      "CLI لتتبع المصروفات",
+      "استهلاك API من Dart",
+      "اختبارات وحدة أساسية"
+    ],
+    resources: [10,16,23,33,34]
+  },
+  {
+    id: 6, title: "أساسيات Flutter", duration: "4 أسابيع", hours: "40-60 ساعة",
+    goal: "تبني واجهات متعددة الصفحات، نماذج، وثيم عربي مرتب.",
+    skills: ["Widgets", "التنقل", "النماذج", "الثيمات", "التجاوب"],
+    checkpoint: "تطبيق ملاحظات وتطبيق متجر صغير يعملان على الشاشات المختلفة.",
+    weeks: [
+      { title: "الأسبوع 13: الواجهة الأولى", steps: [
+        "افهم الفرق بين Stateless وStateful.",
+        "ابنِ 3 شاشات بتخطيطات مختلفة: عمود، صف، قائمة.",
+        "التزم بمحاذاة عربية وdir مناسب.",
+        "أعد بناء شاشة من تصميم بسيط."
+      ]},
+      { title: "الأسبوع 14: تنقل ونماذج", steps: [
+        "اربط الشاشات بـ Navigator أو GoRouter بشكل مبسّط.",
+        "ابنِ شاشتي دخول وتسجيل مع تحقق من الحقول.",
+        "أضف ثيماً فاتحاً وغامقاً بألوان ثابتة.",
+        "لا تترك زرًا من غير حالة ضغط واضحة."
+      ]},
+      { title: "الأسبوع 15: قوائم وملفات", steps: [
+        "اعرض قوائم طويلة بأداء مقبول.",
+        "أضف صورًا وأيقونات من الحزم المعتمدة.",
+        "اجعل الواجهة تتحمل الجوال والتابلت.",
+        "ابنِ هيكل تطبيق متجر: رئيسية، تفاصيل، سلة."
+      ]},
+      { title: "الأسبوع 16: مشروع الملاحظات", steps: [
+        "ابنِ تطبيق ملاحظات فيه إضافة وتعديل وحذف.",
+        "أظهر حالة فارغة عندما لا توجد ملاحظات.",
+        "احفظ البيانات محلياً بشكل مبدئي.",
+        "سجّل فيديو قصير أو لقطات للمشروع."
+      ]}
+    ],
+    tasks: [
+      "3 شاشات من تصميم",
+      "واجهة دخول وتسجيل",
+      "تطبيق ملاحظات",
+      "متجر صغير متعدد الصفحات"
+    ],
+    resources: [10,16,17,23,24,33]
+  },
+  {
+    id: 7, title: "Flutter للإنتاج", duration: "4 أسابيع", hours: "40-60 ساعة",
+    goal: "تنظم الحالة، تتكلم مع REST، وتعالج التحميل والفشل والتخزين.",
+    skills: ["إدارة الحالة", "HTTP", "التخزين المحلي", "التحقق", "الاختبار"],
+    checkpoint: "تطبيق مالية فيه دخول وهمي، معاملات، بحث، وتخزين محلي.",
+    weeks: [
+      { title: "الأسبوع 17: الحالة", steps: [
+        "اختر أسلوب حالة واحد والتزم به في المشروع.",
+        "افصل منطق العمل عن شكل الواجهة.",
+        "لا تضع طلب الشبكة داخل ويدجت العرض.",
+        "ابدأ تطبيق المالية: قائمة معاملات فارغة أولاً."
+      ]},
+      { title: "الأسبوع 18: الشبكة", steps: [
+        "ابنِ عميلاً لـ REST مع نماذج JSON واضحة.",
+        "أظهر تحميلاً حقيقياً وليس دائرة عامة فقط.",
+        "عالج انقطاع الشبكة برسالة مفهومة.",
+        "اربط الدخول الوهمي بمسار نجاح وفشل."
+      ]},
+      { title: "الأسبوع 19: التخزين والجودة", steps: [
+        "احفظ آخر البيانات للعرض بدون إنترنت.",
+        "تحقق من المدخلات قبل الإرسال.",
+        "أضف بحثاً وتصفية للتواريخ أو الأنواع.",
+        "اكتب اختباراً لمنطق الرصيد."
+      ]},
+      { title: "الأسبوع 20: إنهاء تطبيق المالية", steps: [
+        "أكمل الرسوم البسيطة أو ملخص الأرقام.",
+        "راجع الأسماء والمجلدات لتكون مفهومة.",
+        "جهّز README فيه لقطات وتشغيل المشروع.",
+        "لا تنتقل قبل أن يعمل التطبيق بعد إعادة الفتح."
+      ]}
+    ],
+    tasks: [
+      "عميل REST",
+      "دخول وهمي يعمل",
+      "تخزين بدون إنترنت",
+      "اختبارات وهيكل منظم"
+    ],
+    resources: [10,16,17,23,24,35]
+  },
+  {
+    id: 8, title: "SQL وقواعد البيانات", duration: "أسبوعان", hours: "20-30 ساعة",
+    goal: "تصمم جداول صحيحة وتكتب استعلامات تخدم تطبيق حقيقي.",
+    skills: ["الجداول والمفاتيح", "CRUD", "JOIN", "الفهارس", "التطبيع"],
+    checkpoint: "مخطط لمتجر أو مدرسة، و20 استعلاماً، وبيانات تجريبية.",
+    weeks: [
+      { title: "الأسبوع 21: الجداول والاستعلامات", steps: [
+        "صمم جداول مستخدمين ومنتجات وطلبات.",
+        "اكتب إدخال وتحديث وحذف وجلب بوضوح.",
+        "نفّذ 10 استعلامات على بيانات تجريبية.",
+        "حدد المفتاح الأساسي والخارجي قبل الكتابة العشوائية."
+      ]},
+      { title: "الأسبوع 22: العلاقات والجودة", steps: [
+        "اكتب JOIN لعرض الطلب مع اسم المستخدم والمنتج.",
+        "افهم متى يفيد الفهرس ومتى يضر.",
+        "ارسم ERD لنظام مدرسة أو متجر.",
+        "أضف بيانات أولية وmigrations بسيطة."
+      ]}
+    ],
+    tasks: [
+      "تصميم قاعدة لمتجر",
+      "20 استعلام SQL",
+      "ERD لنظام مدرسة",
+      "migrations وبيانات تجريبية"
+    ],
+    resources: [11,18,25,36,37]
+  },
+  {
+    id: 9, title: "Node.js وExpress", duration: "4 أسابيع", hours: "40-60 ساعة",
+    goal: "تبني API نظيفاً فيه تحقق، أخطاء واضحة، ورفع ملفات.",
+    skills: ["Node", "npm", "Express", "الوسائط", "REST", "رفع الملفات"],
+    checkpoint: "API مهام فيه تحقق، ترقيم صفحات، ورفع صورة.",
+    weeks: [
+      { title: "الأسبوع 23: بيئة Node", steps: [
+        "افهم ماذا يفعل Node وما الفرق عن المتصفح.",
+        "أنشئ مشروعاً بـ npm وملفات واضحة.",
+        "شغّل خادماً يرجع JSON في مسار صحة النظام.",
+        "استخدم متغيرات البيئة من البداية."
+      ]},
+      { title: "الأسبوع 24: Express", steps: [
+        "ابنِ مسارات للمهام: إنشاء، جلب، تحديث، حذف.",
+        "أضف وسيطاً للسجلات ومعالجة الأخطاء.",
+        "تحقق من الجسم قبل حفظ أي سجل.",
+        "أرجع رموز حالة صحيحة لا رسالة عامة فقط."
+      ]},
+      { title: "الأسبوع 25: الملفات والبحث", steps: [
+        "أضف رفع صورة لمسار واحد مع حد حجم.",
+        "اربط المسارات بقاعدة البيانات التي صممتها.",
+        "أضف ترقيم صفحات وتصفية بالحالة.",
+        "اختبر المسارات بـ Thunder Client أو Postman."
+      ]},
+      { title: "الأسبوع 26: API جاهز للربط", steps: [
+        "وحّد شكل الاستجابة: data وerror.",
+        "اكتب توثيقاً قصيراً لكل مسار.",
+        "أضف بيانات تجريبية لإعادة التشغيل بسهولة.",
+        "لا تنتقل وفي المسارات مسارات succeess بلا اختبار."
+      ]}
+    ],
+    tasks: [
+      "API للمهام",
+      "مسار مصادقة أولي",
+      "رفع صورة",
+      "ترقيم وتصفية وتحقق"
+    ],
+    resources: [8,11,14,26,31,38]
+  },
+  {
+    id: 10, title: "Backend أعمق", duration: "3 أسابيع", hours: "30-45 ساعة",
+    goal: "تحمي الـAPI: هوية، صلاحيات، حدود طلبات، واختبارات.",
+    skills: ["JWT", "الأدوار", "الأمان", "السجلات", "الاختبارات"],
+    checkpoint: "دخول بـ JWT، أدوار، وتحديث للجلسة، مع اختبارات مسار أساسي.",
+    weeks: [
+      { title: "الأسبوع 27: الهوية", steps: [
+        "نفّذ تسجيل ودخول مع تشفير كلمة المرور.",
+        "أصدر JWT قصير العمر وRefresh أطول عمراً.",
+        "احمِ المسارات الخاصة بوسيط تحقق.",
+        "اختبر انتهاء الجلسة وإعادة التجديد."
+      ]},
+      { title: "الأسبوع 28: الصلاحيات والأمان", steps: [
+        "أضف أدواراً: مستخدم ومشرف على الأقل.",
+        "امنع المستخدم من تعديل سجل غيره.",
+        "أضف حداً لعدد الطلبات على مسار الدخول.",
+        "راجع الرؤوس الأساسية للأمان."
+      ]},
+      { title: "الأسبوع 29: المراقبة والجودة", steps: [
+        "سجّل الأخطاء بشكل يفيدك لا يزعج المستخدم.",
+        "اكتب اختبار تكامل لمسار الدخول والمهام.",
+        "أضف إرسال بريد اختياري لإعادة التعيين أو اكتفِ بمحاكاة.",
+        "راجع الأسرار: لا ترفع مفاتيح في Git."
+      ]}
+    ],
+    tasks: [
+      "API بصلاحيات أدوار",
+      "تجديد JWT",
+      "حد لمعدل الطلبات",
+      "اختبارات تكامل"
+    ],
+    resources: [8,11,26,32,38]
+  },
+  {
+    id: 11, title: "ربط Full-Stack", duration: "3 أسابيع", hours: "30-45 ساعة",
+    goal: "تطبيق Flutter يتكلم مع API حقيقي: دخول، بيانات، رفع، وأخطاء.",
+    skills: ["الربط", "حالات التحميل", "الترقيم", "الملفات", "حساب المستخدم"],
+    checkpoint: "من الجوال تضيف وتعدّل وتحذف، وتعرض ملفاً شخصياً كاملاً.",
+    weeks: [
+      { title: "الأسبوع 30: أول ربط حقيقي", steps: [
+        "اربط شاشة الدخول بالـAPI لا ببيانات وهمية.",
+        "احفظ التوكن بشكل آمن مناسب للتعلم ثم حسّنه.",
+        "اعرض قائمة المهام القادمة من الخادم.",
+        "عالج 401 بإرجاع المستخدم لشاشة الدخول."
+      ]},
+      { title: "الأسبوع 31: العمليات الكاملة", steps: [
+        "نفّذ إنشاء وتحديث وحذف من التطبيق.",
+        "أضف ترقيم صفحات أو سحب للمزيد.",
+        "ارفع صورة الملف الشخصي.",
+        "أظهر رسائل الخطأ القادمة من الخادم بلغة مفهومة."
+      ]},
+      { title: "الأسبوع 32: المشرف واللمعان", steps: [
+        "أضف مسارات مشرف أو شاشة ويب بسيطة للإدارة.",
+        "راجع حالات التحميل والفارغ والفشل في كل شاشة.",
+        "اختبر الحساب على جهاز حقيقي إن أمكن.",
+        "ثبّت قائمة نواقص قصيرة قبل النشر."
+      ]}
+    ],
+    tasks: [
+      "ربط Flutter بالـAPI",
+      "ملف شخصي كامل",
+      "CRUD من الجوال",
+      "مسارات مشرف"
+    ],
+    resources: [10,16,17,23,26,35]
+  },
+  {
+    id: 12, title: "النشر والمعرض", duration: "أسبوعان", hours: "20-30 ساعة",
+    goal: "المشروع يعمل على الإنترنت، وله شرح يُقرأ في دقيقتين.",
+    skills: ["متغيرات البيئة", "النشر", "HTTPS", "إصدار أندرويد", "README"],
+    checkpoint: "رابط للـAPI، رابط للويب، ملف APK أو نسخة تشغيل، ومعرض شخصي.",
+    weeks: [
+      { title: "الأسبوع 33: النشر", steps: [
+        "انشر قاعدة البيانات والخادم على خدمة تناسب ميزانيتك.",
+        "ضع الأسرار في متغيرات بيئة لا في الكود.",
+        "اربط نطاقاً أو رابطاً عاماً وتأكد من HTTPS.",
+        "انشر الصفحة الشخصية أو لوحة المشرف."
+      ]},
+      { title: "الأسبوع 34: المعرض", steps: [
+        "ابنِ نسخة أندرويد قابلة للتجربة.",
+        "اكتب README فيه المشكلة، الحل، والتشغيل.",
+        "أضف لقطات وروابط المستودعات في صفحتك.",
+        "راجع الخطة من البداية وسجّل ما تعلمته فعلاً."
+      ]}
+    ],
+    tasks: [
+      "نشر الخادم",
+      "نشر الويب",
+      "إصدار أندرويد",
+      "README احترافي ومعرض"
+    ],
+    resources: [1,9,19,27,39]
+  }
+];
+
+const projects = [
+  {
+    title: "المعرض الشخصي",
+    when: "بعد المرحلة 3",
+    stack: "HTML + CSS + JS",
+    steps: [
+      "صفحة رئيسية فيها من أنت وماذا تبني.",
+      "قسم مشاريع بروابط GitHub.",
+      "نموذج تواصل يتحقق من الحقول.",
+      "وضع غامق ومتجاوب كامل.",
+      "نسخة عربية واضحة، ثم انشرها."
+    ]
+  },
+  {
+    title: "تطبيق المالية",
+    when: "خلال المرحلتين 6 و7",
+    stack: "Flutter",
+    steps: [
+      "دخول وهمي ثم حقيقي لاحقاً.",
+      "إضافة معاملة: دخل أو صرف.",
+      "بحث وتصفية حسب النوع أو التاريخ.",
+      "تخزين محلي وملخص رصيد.",
+      "هيكل مجلدات يفصل الواجهة عن المنطق."
+    ]
+  },
+  {
+    title: "مدير المهام المتكامل",
+    when: "المراحل 8 إلى 11",
+    stack: "Flutter + Express + SQL",
+    steps: [
+      "جداول المستخدمين والمهام والملفات.",
+      "REST مع JWT وصلاحيات.",
+      "تطبيق جوال ينفّذ العمليات كاملة.",
+      "رفع مرفق أو صورة.",
+      "شاشة مشرف أو مسارات إدارة."
+    ]
+  },
+  {
+    title: "مشروع التخرج",
+    when: "بعد المرحلة 12",
+    stack: "SaaS صغير حقيقي",
+    steps: [
+      "اختر مشكلة ضيقة: مواعيد، مخزون، أو متابعة طلاب.",
+      "ويب للمشرف وتطبيق للجوال.",
+      "أدوار وصلاحيات وإشعارات مبسطة.",
+      "نشر مع نسخة احتياطية للفكرة على الأقل.",
+      "اكتب قصة المشروع: لمن، وما الذي تغيّر."
+    ]
+  }
+];
+
+const resources = [
+  { id: 1, title: "أكاديمية الزيرو", type: "مسار", topic: "ويب", url: "https://elzero.org/", blurb: "أقوى مسار عربي مجاني لـ HTML وCSS وJavaScript وGit من الصفر." },
+  { id: 2, title: "قناة Elzero Web School", type: "قناة", topic: "ويب", url: "https://www.youtube.com/@ElzeroWebSchool", blurb: "الدورات كاملة على يوتيوب مع تمارين بعد كل مرحلة." },
+  { id: 3, title: "أكاديمية حسوب", type: "منصة", topic: "أساسيات", url: "https://academy.hsoub.com/", blurb: "مقالات ودورات وكتب عربية مرتبة. ابدأ بالمجاني ثم قرر." },
+  { id: 4, title: "تعلم البرمجة في حسوب", type: "دليل", topic: "أساسيات", url: "https://academy.hsoub.com/learn-programming/", blurb: "خريطة مجالات البرمجة بالعربية مع روابط الكتب والموسوعة." },
+  { id: 5, title: "موسوعة حسوب", type: "توثيق", topic: "ويب", url: "https://wiki.hsoub.com/", blurb: "توثيق عربي لـ HTML وCSS وJavaScript وGit وNode وغيرها." },
+  { id: 6, title: "تعلم JavaScript في حسوب", type: "دليل", topic: "جافاسكربت", url: "https://academy.hsoub.com/javascript/", blurb: "تجميع الكتب والمقالات والتوثيق العربي لجافاسكربت." },
+  { id: 7, title: "كتاب البرمجة بلغة جافاسكربت", type: "كتاب", topic: "جافاسكربت", url: "https://harmash.com/books/hsoub-javascript", blurb: "الترجمة العربية لكتاب Eloquent JavaScript." },
+  { id: 8, title: "دورة تطبيقات JavaScript", type: "دورة", topic: "جافاسكربت", url: "https://academy.hsoub.com/learn/javascript-application-development/", blurb: "مسار حسوب الأطول: لغة، React، وNode داخل دورة واحدة." },
+  { id: 9, title: "كتب حسوب المجانية", type: "كتاب", topic: "أساسيات", url: "https://academy.hsoub.com/files/", blurb: "أكثر من 35 كتاباً: Git، HTML5، جافاسكربت، وخوادم." },
+  { id: 10, title: "هرمش", type: "موقع", topic: "أساسيات", url: "https://harmash.com/", blurb: "شروحات عربية مبسطة للغات وقواعد البيانات والشبكات." },
+  { id: 11, title: "مهارة تك", type: "منصة", topic: "أساسيات", url: "https://maharatech.gov.eg/", blurb: "دورات مصرية مجانية في البرمجة وقواعد البيانات والشبكات." },
+  { id: 12, title: "حسوب I/O", type: "مجتمع", topic: "أساسيات", url: "https://io.hsoub.com/", blurb: "اسأل بالعربية عندما تعلق. اقرأ الأسئلة المجابة أولاً." },
+  { id: 13, title: "هرمش HTML", type: "دورة", topic: "ويب", url: "https://harmash.com/html", blurb: "HTML من الصفر بالعربية مع أمثلة قصيرة." },
+  { id: 14, title: "هرمش JavaScript", type: "دورة", topic: "جافاسكربت", url: "https://harmash.com/javascript", blurb: "أساسيات اللغة قبل أي إطار عمل." },
+  { id: 15, title: "توثيق HTTP في الموسوعة", type: "توثيق", topic: "ويب", url: "https://wiki.hsoub.com/HTTP", blurb: "مرجع عربي لطرق الطلب ورؤوسه عندما تنسى المعنى." },
+  { id: 16, title: "Programming Advices", type: "قناة", topic: "أساسيات", url: "https://www.youtube.com/@ProgrammingAdvices", blurb: "تأسيس هندسي بالعربية: منطق، قواعد بيانات، ومسارات طويلة." },
+  { id: 17, title: "موقع Programming Advices", type: "منصة", topic: "أساسيات", url: "https://programmingadvices.com/", blurb: "تنظيم الدورات والمسارات النصية بجانب القناة." },
+  { id: 18, title: "The New Baghdad", type: "قناة", topic: "فلاتر", url: "https://www.youtube.com/@TheNewBaghdad", blurb: "شروحات عربية متنوعة وفيها مسار Flutter عملي." },
+  { id: 19, title: "Hassouna Academy", type: "قناة", topic: "أساسيات", url: "https://www.youtube.com/@HassounaAcademy", blurb: "دورات طويلة بعدة لغات وأدوات. مفيدة للمراجعة." },
+  { id: 20, title: "قناة أكاديمية حسوب", type: "قناة", topic: "ويب", url: "https://www.youtube.com/@HsoubAcademy", blurb: "مقاطع قصيرة ومسارات مكملة لمقالات الأكاديمية." },
+  { id: 21, title: "Codezilla", type: "قناة", topic: "جافاسكربت", url: "https://www.youtube.com/@codezilla", blurb: "مشاريع ويب عملية بالعربية بعد الأساسيات." },
+  { id: 22, title: "عبد الرحمن جمال", type: "قناة", topic: "ويب", url: "https://www.youtube.com/@AbdelrahmanGamal", blurb: "شروحات واجهات وأدوات ويب بأسلوب مباشر." },
+  { id: 23, title: "Wael Abo Hamza", type: "قناة", topic: "فلاتر", url: "https://www.youtube.com/@WaelAboHamza", blurb: "Dart وFlutter بالعربية مع تطبيقات عملية." },
+  { id: 24, title: "Tarmeez Academy", type: "قناة", topic: "فلاتر", url: "https://www.youtube.com/@TarmeezAcademy", blurb: "مسارات جوال وباك إند بالعربية، مناسبة بعد الأساسيات." },
+  { id: 25, title: "أكاديمية طرميز", type: "منصة", topic: "فلاتر", url: "https://tarmeezacademy.com/", blurb: "موقع القناة لتنظيم الدورات والتسجيل." },
+  { id: 26, title: "Flutter Challenges", type: "قناة", topic: "فلاتر", url: "https://www.youtube.com/@abdosobhyflutter", blurb: "واجهات وتحديات Flutter ترفع ذوق التنفيذ." },
+  { id: 27, title: "Unique Coderz Academy", type: "قناة", topic: "ويب", url: "https://www.youtube.com/@UniqueCoderzAcademy", blurb: "مشاريع ويب كاملة بالعربية للمراجعة بعد الدرس." },
+  { id: 28, title: "Muhammed Essa", type: "قناة", topic: "أساسيات", url: "https://www.youtube.com/@MuhammedEssa", blurb: "مكتبة ضخمة: لغات، أدوات، ومفاهيم متنوعة." },
+  { id: 29, title: "EraaSoft", type: "قناة", topic: "باك إند", url: "https://www.youtube.com/@EraaSoft", blurb: "مسارات خلفية وقواعد بيانات بأسلوب أكاديمي عربي." },
+  { id: 30, title: "كتاب HTML5 من حسوب", type: "كتاب", topic: "ويب", url: "https://harmash.com/books/hsoub-dive-into-html5", blurb: "مرجع عربي أعمق من دورة المبتدئ عندما تحتاج تفاصيل." },
+  { id: 31, title: "توثيق JavaScript في الموسوعة", type: "توثيق", topic: "جافاسكربت", url: "https://wiki.hsoub.com/JavaScript", blurb: "ارجع هنا بدل حفظ كل دالة من الفيديو." },
+  { id: 32, title: "توثيق Node.js في الموسوعة", type: "توثيق", topic: "باك إند", url: "https://wiki.hsoub.com/Node.js", blurb: "مرجع عربي لمسارات الخادم والوحدات." },
+  { id: 33, title: "Flutter Learning Pathway", type: "رسمي", topic: "فلاتر", url: "https://docs.flutter.dev/learn/pathway", blurb: "المسار الرسمي بعد أن تفهم Dart. بالإنجليزية الواضحة." },
+  { id: 34, title: "Dart Learn", type: "رسمي", topic: "فلاتر", url: "https://dart.dev/learn", blurb: "المصدر الأول لقواعد اللغة. اقرأه بجانب أي شرح عربي." },
+  { id: 35, title: "Flutter Docs", type: "رسمي", topic: "فلاتر", url: "https://docs.flutter.dev/", blurb: "كل ويدجت له صفحة. اعتد فتح التوثيق لا الفيديو أولاً." },
+  { id: 36, title: "توثيق SQL في الموسوعة", type: "توثيق", topic: "قواعد بيانات", url: "https://wiki.hsoub.com/SQL", blurb: "تذكير عربي بالأوامر والعلاقات." },
+  { id: 37, title: "PostgreSQL Docs", type: "رسمي", topic: "قواعد بيانات", url: "https://www.postgresql.org/docs/", blurb: "عندما تبدأ جدياً، هذا هو المرجع لا الملخصات." },
+  { id: 38, title: "Node.js Learn", type: "رسمي", topic: "باك إند", url: "https://nodejs.org/en/learn", blurb: "أساسيات التشغيل والوحدات من المصدر." },
+  { id: 39, title: "MDN Learn", type: "رسمي", topic: "ويب", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development", blurb: "أفضل منهج ويب مجاني عالمياً. استخدمه مع الزيرو." },
+  { id: 40, title: "MDN Curriculum", type: "رسمي", topic: "ويب", url: "https://developer.mozilla.org/en-US/curriculum/", blurb: "قائمة مهارات مرتبة إذا أحببت منهجاً إنجليزياً صارماً." },
+  { id: 41, title: "Express.js", type: "رسمي", topic: "باك إند", url: "https://expressjs.com/", blurb: "توثيق الإطار الذي ستبني عليه الـAPI." },
+  { id: 42, title: "Fares Hamam", type: "قناة", topic: "فلاتر", url: "https://www.youtube.com/@FaresHamam", blurb: "واجهات Flutter وشرح عملي للشاشات والحركة." },
+  { id: 43, title: "Nour Homsi", type: "قناة", topic: "أساسيات", url: "https://www.youtube.com/@NourHomsi", blurb: "مفاهيم برمجة وويب بأسلوب هادئ للمراجعة." },
+  { id: 44, title: "هرمش CSS", type: "دورة", topic: "ويب", url: "https://harmash.com/css", blurb: "خصائص التخطيط والتنسيق بالعربية قبل أي إطار." },
+  { id: 45, title: "هرمش SQL", type: "دورة", topic: "قواعد بيانات", url: "https://harmash.com/sql", blurb: "الاستعلامات والعلاقات من الصفر بالعربية." },
+  { id: 46, title: "هرمش Git", type: "دورة", topic: "أدوات", url: "https://harmash.com/git", blurb: "أوامر Git الأساسية عندما تريد نصاً بدل الفيديو." },
+  { id: 47, title: "توثيق Git في الموسوعة", type: "توثيق", topic: "أدوات", url: "https://wiki.hsoub.com/Git", blurb: "مرجع عربي للأوامر اليومية." },
+  { id: 48, title: "توثيق HTML في الموسوعة", type: "توثيق", topic: "ويب", url: "https://wiki.hsoub.com/HTML", blurb: "افتحه بجانب أي فيديو HTML." },
+  { id: 49, title: "توثيق CSS في الموسوعة", type: "توثيق", topic: "ويب", url: "https://wiki.hsoub.com/CSS", blurb: "خصائص التخطيط عندما تنسى الاسم الدقيق." },
+  { id: 50, title: "قناة Flutter الرسمية", type: "رسمي", topic: "فلاتر", url: "https://www.youtube.com/@FlutterDev", blurb: "تحديثات وورش قصيرة بعد أن تتجاوز الأساسيات." }
+];
+
+const KEY = "roadmap_v2_";
+const state = { view: "path", phase: 0, topic: "الكل", query: "" };
+
+function load(key) { return localStorage.getItem(KEY + key) === "1"; }
+function save(key, on) { localStorage.setItem(KEY + key, on ? "1" : "0"); }
+function taskKey(pi, ti) { return "p" + pi + "t" + ti; }
+
+function phaseStats(i) {
+  const tasks = phases[i].tasks;
+  const done = tasks.filter((_, t) => load(taskKey(i, t))).length;
+  return { done, total: tasks.length, pct: Math.round(done / tasks.length * 100) };
+}
+
+function firstOpenPhase() {
+  const idx = phases.findIndex((_, i) => phaseStats(i).done < phaseStats(i).total);
+  return idx === -1 ? 0 : idx;
+}
+
+function allStats() {
+  let done = 0, total = 0;
+  phases.forEach((_, i) => {
+    const s = phaseStats(i);
+    done += s.done; total += s.total;
+  });
+  return { done, total, pct: total ? Math.round(done / total * 100) : 0 };
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem(KEY + "theme", theme);
+  document.getElementById("themeBtn").textContent = theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن";
+}
+
+function renderNav() {
+  const current = firstOpenPhase();
+  document.getElementById("phaseNav").innerHTML = phases.map((p, i) => {
+    const s = phaseStats(i);
+    const cls = s.pct === 100 ? "done" : (i === current ? "now" : "");
+    return `<button class="phase-btn ${i===state.phase?"active":""}" data-phase="${i}">
+      <span class="dot ${cls}"></span>
+      <span>${p.id}. ${p.title}</span>
+      <small>${s.pct}%</small>
+    </button>`;
+  }).join("");
+}
+
+function renderPhase() {
+  const p = phases[state.phase];
+  const s = phaseStats(state.phase);
+  const weeks = p.weeks.map(w => `
+    <article class="week">
+      <h3>${w.title}</h3>
+      <ol>${w.steps.map(step => `<li>${step}</li>`).join("")}</ol>
+    </article>`).join("");
+  const tasks = p.tasks.map((t, i) => `
+    <label>
+      <input type="checkbox" data-pi="${state.phase}" data-ti="${i}" ${load(taskKey(state.phase,i))?"checked":""}>
+      <span>${t}</span>
+    </label>`).join("");
+  const res = p.resources.map(id => resources.find(r => r.id === id)).filter(Boolean).map(r =>
+    `<a href="${r.url}" target="_blank" rel="noopener">${r.title} <span class="chip">${r.type}</span></a>`
+  ).join("");
+
+  document.getElementById("phasePanel").innerHTML = `
+    <div class="kicker">المرحلة ${p.id} من 12 · ${p.duration} · ${p.hours}</div>
+    <h2>${p.title}</h2>
+    <p>${p.goal}</p>
+    <div class="meta-row">${p.skills.map(x => `<span class="chip">${x}</span>`).join("")}</div>
+    <div class="toolbar">
+      <button class="primary" id="markPhase">إكمال مهام المرحلة</button>
+      <button id="resetPhase">تصفير المرحلة</button>
+    </div>
+    <p class="kicker">تقدم المرحلة: ${s.done} من ${s.total}</p>
+    <div class="bar"><div class="fill" style="width:${s.pct}%"></div></div>
+    <h2 style="margin-top:22px">الأسابيع خطوة بخطوة</h2>
+    ${weeks}
+    <h2 style="margin-top:8px">بوابة الانتقال</h2>
+    <div class="checkpoint">${p.checkpoint}</div>
+    <h2 style="margin-top:22px">مهام الإنجاز</h2>
+    <div class="tasks">${tasks}</div>
+    <h2 style="margin-top:22px">مصادر هذه المرحلة</h2>
+    <div class="res-mini">${res}</div>
+  `;
+}
+
+function renderProjects() {
+  document.getElementById("view-projects").innerHTML = `
+    <h2>المشاريع التي تثبت التعلم</h2>
+    <p class="kicker">كل مشروع بعد مرحلة محددة. لا تجمعها في النهاية.</p>
+    <div class="grid-2" style="margin-top:16px">
+      ${projects.map(p => `
+        <article class="project">
+          <div class="meta-row"><span class="chip on">${p.when}</span><span class="chip">${p.stack}</span></div>
+          <h3>${p.title}</h3>
+          <ol>${p.steps.map(s => `<li>${s}</li>`).join("")}</ol>
+        </article>`).join("")}
+    </div>`;
+}
+
+function renderResources() {
+  const topics = ["الكل", ...new Set(resources.map(r => r.topic))];
+  const q = state.query.trim();
+  const list = resources.filter(r => {
+    const hay = (r.title + " " + r.blurb + " " + r.type + " " + r.topic).toLowerCase();
+    const topicOk = state.topic === "الكل" || r.topic === state.topic;
+    const queryOk = !q || hay.includes(q.toLowerCase()) || (r.title + r.blurb).includes(q);
+    return topicOk && queryOk;
+  });
+  document.getElementById("view-resources").innerHTML = `
+    <h2>مكتبة المصادر</h2>
+    <p class="kicker">${resources.length} مصدراً. ابدأ بالعربي للفهم، ثم ارجع للتوثيق الرسمي قبل أي إطار عمل.</p>
+    <input class="search" id="resSearch" value="${state.query}" placeholder="ابحث عن قناة، كتاب، أو موضوع">
+    <div class="filters">
+      ${topics.map(t => `<button class="chip ${t===state.topic?"on":""}" data-topic="${t}">${t}</button>`).join("")}
+    </div>
+    <div class="grid-2" id="resGrid">
+      ${list.length ? list.map(r => `
+        <a class="resource" href="${r.url}" target="_blank" rel="noopener">
+          <div class="meta-row"><span class="chip">${r.topic}</span><span class="chip">${r.type}</span></div>
+          <b>${r.title}</b>
+          <span>${r.blurb}</span>
+        </a>`).join("") : `<div class="empty">لا توجد نتائج لهذه التصفية.</div>`}
+    </div>`;
+}
+
+function renderMethod() {
+  document.getElementById("view-method").innerHTML = `
+    <h2>كيف تدرس حتى لا تخدع نفسك</h2>
+    <div class="rules">
+      <article class="project">
+        <h3>الأسبوع القياسي</h3>
+        <ol>
+          <li>5 أيام × 2 إلى 3 ساعات.</li>
+          <li>30% مشاهدة أو قراءة فقط.</li>
+          <li>60% كتابة كود بيدك.</li>
+          <li>10% مراجعة: ماذا أنجزت، ماذا علّق، ماذا غداً.</li>
+          <li>يوم واحد في الأسبوع لإغلاق مهمة واحدة كاملة لا لفتح دورة جديدة.</li>
+        </ol>
+      </article>
+      <article class="project">
+        <h3>قاعدة الانتقال</h3>
+        <ol>
+          <li>الفيديو ليس إنجازاً. المشروع هو الإنجاز.</li>
+          <li>أعد بناء التمرين في اليوم التالي من الذاكرة.</li>
+          <li>إذا نسخت حلاً، امسحه وأعد كتابته بعد ساعة.</li>
+          <li>ارفع كل أسبوع إلى GitHub ولو كان ناقصاً.</li>
+          <li>لا تبدأ Flutter قبل أن تبني صفحة ويب ومشروع JS وحدك.</li>
+        </ol>
+      </article>
+    </div>
+    <div class="grid-3" style="margin-top:12px">
+      <article class="project"><h3>قبل كل مرحلة</h3><p>اقرأ هدف المرحلة وبوابة الانتقال. جهّز مجلد المشروع واسم المستودع.</p></article>
+      <article class="project"><h3>أثناء المرحلة</h3><p>اتبع أسابيعها بالترتيب. علّم المهمة فقط بعد أن تعمل عندك محلياً.</p></article>
+      <article class="project"><h3>بعد المرحلة</h3><p>أضف المشروع للمعرض، واكتب 5 أسطر: ما الذي كان صعباً وكيف حللته.</p></article>
+    </div>
+  `;
+}
+
+function updateHeader() {
+  const s = allStats();
+  document.getElementById("topProgress").textContent = s.pct + "%";
+  document.getElementById("statDone").textContent = s.done;
+  document.getElementById("barFill").style.width = s.pct + "%";
+}
+
+function showView(name) {
+  state.view = name;
+  ["path","projects","resources","method"].forEach(v => {
+    const el = document.getElementById("view-" + v);
+    const hide = v !== name;
+    el.classList.toggle("hidden", hide);
+    el.toggleAttribute("hidden", hide);
+  });
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.view === name ? "true" : "false"));
+  if (name === "projects") renderProjects();
+  if (name === "resources") renderResources();
+  if (name === "method") renderMethod();
+}
+
+function refresh() {
+  renderNav();
+  renderPhase();
+  updateHeader();
+}
+
+document.querySelector(".tabs").addEventListener("click", e => {
+  const tab = e.target.closest(".tab");
+  if (tab) showView(tab.dataset.view);
+});
+document.getElementById("phaseNav").addEventListener("click", e => {
+  const btn = e.target.closest("[data-phase]");
+  if (!btn) return;
+  state.phase = Number(btn.dataset.phase);
+  refresh();
+});
+document.getElementById("phasePanel").addEventListener("change", e => {
+  const el = e.target;
+  if (el.matches("input[type=checkbox][data-pi]")) {
+    save(taskKey(el.dataset.pi, el.dataset.ti), el.checked);
+    refresh();
+  }
+});
+document.getElementById("phasePanel").addEventListener("click", e => {
+  if (e.target.id === "markPhase") {
+    phases[state.phase].tasks.forEach((_, i) => save(taskKey(state.phase, i), true));
+    refresh();
+  }
+  if (e.target.id === "resetPhase" && confirm("تصفير مهام هذه المرحلة؟")) {
+    phases[state.phase].tasks.forEach((_, i) => save(taskKey(state.phase, i), false));
+    refresh();
+  }
+});
+document.getElementById("view-resources").addEventListener("click", e => {
+  const chip = e.target.closest("[data-topic]");
+  if (!chip) return;
+  e.preventDefault();
+  state.topic = chip.dataset.topic;
+  renderResources();
+});
+document.getElementById("view-resources").addEventListener("input", e => {
+  if (e.target.id === "resSearch") {
+    state.query = e.target.value;
+    if (state.query.trim()) state.topic = "الكل";
+    const active = document.activeElement === e.target;
+    const start = e.target.selectionStart;
+    renderResources();
+    if (active) {
+      const input = document.getElementById("resSearch");
+      input.focus();
+      input.setSelectionRange(start, start);
+    }
+  }
+});
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  setTheme(next);
+});
+
+const savedTheme = localStorage.getItem(KEY + "theme") || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+state.phase = firstOpenPhase();
+setTheme(savedTheme);
+refresh();
+</script>
+</body>
+</html>
